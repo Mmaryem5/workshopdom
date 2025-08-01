@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart Test</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        header {
+            background: #667eea;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .cart-container {
+            padding: 20px;
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            border-radius: 8px;
+        }
+
+        .item-image img {
+            width: 60px;
+            height: 60px;
+            border-radius: 5px;
+        }
+
+        .item-details {
+            flex: 1;
+        }
+
+        .item-details h3 {
+            margin-bottom: 5px;
+        }
+
+        .item-price {
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .like-btn {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: #ccc;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .like-btn.liked {
+            color: #e74c3c;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #f8f9fa;
+            padding: 5px 10px;
+            border-radius: 20px;
+        }
+
+        .quantity-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .quantity-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .delete-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .cart-summary {
+            background: #f8f9fa;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 8px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .removing {
+            animation: slideOut 0.5s ease forwards;
+        }
+
+        @keyframes slideOut {
+            0% { opacity: 1; transform: translateX(0); }
+            100% { opacity: 0; transform: translateX(-100%); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Shopping Cart Test</h1>
+        </header>
+        
+        <div class="cart-container">
+            <div class="cart-items">
+                <!-- Item 1 -->
+                <div class="cart-item" data-id="1" data-price="29.99">
+                    <div class="item-image">
+                        <img src="data:image/webp;base64,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" alt="Item 1">
+                    </div>
+                    <div class="item-details">
+                        <h3>Wireless Headphones</h3>
+                        <p>Premium wireless headphones</p>
+                        <div class="item-price">$29.99</div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="like-btn" data-liked="false">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="quantity-controls">
+                            <button class="quantity-btn minus-btn">-</button>
+                            <span class="quantity">1</span>
+                            <button class="quantity-btn plus-btn">+</button>
+                        </div>
+                        <button class="delete-btn">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Item 2 -->
+                <div class="cart-item" data-id="2" data-price="49.99">
+                    <div class="item-image">
+                        <img src="https://th.bing.com/th/id/OIP.jcScXaVLX70X5ig8ABEyWgHaHa?w=227&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3" alt="Item 2">
+                    </div>
+                    <div class="item-details">
+                        <h3>Smart Watch</h3>
+                        <p>Fitness tracking smartwatch</p>
+                        <div class="item-price">$49.99</div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="like-btn" data-liked="false">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="quantity-controls">
+                            <button class="quantity-btn minus-btn">-</button>
+                            <span class="quantity">1</span>
+                            <button class="quantity-btn plus-btn">+</button>
+                        </div>
+                        <button class="delete-btn">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Item 3 -->
+                <div class="cart-item" data-id="3" data-price="19.99">
+                    <div class="item-image">
+                        <img src="https://th.bing.com/th/id/OIP.y_7PggrNyZhihr1kH2yYHAHaHa?w=170&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3" alt="Item 3">
+                    </div>
+                    <div class="item-details">
+                        <h3>Phone Case</h3>
+                        <p>Durable protective case</p>
+                        <div class="item-price">$19.99</div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="like-btn" data-liked="false">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="quantity-controls">
+                            <button class="quantity-btn minus-btn">-</button>
+                            <span class="quantity">1</span>
+                            <button class="quantity-btn plus-btn">+</button>
+                        </div>
+                        <button class="delete-btn">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cart-summary">
+                <h2>Cart Summary</h2>
+                <div class="summary-item">
+                    <span>Subtotal:</span>
+                    <span class="subtotal">$0.00</span>
+                </div>
+                <div class="summary-item">
+                    <span>Tax (8%):</span>
+                    <span class="tax">$0.00</span>
+                </div>
+                <div class="summary-item">
+                    <span>Total:</span>
+                    <span class="total-price">$0.00</span>
+                </div>
+                <button class="checkout-btn">Proceed to Checkout</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 
