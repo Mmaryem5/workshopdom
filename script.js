@@ -9,6 +9,8 @@ class ShoppingCart {
     init() {
         this.loadItems();
         this.setupEventListeners();
+        // Initialize all quantities to 0
+        this.initializeQuantitiesToZero();
         this.updateTotal();
     }
 
@@ -23,6 +25,25 @@ class ShoppingCart {
                 element: item
             };
             this.items.push(itemData);
+        });
+    }
+
+    initializeQuantitiesToZero() {
+        // Set all quantities to 0 and disable minus buttons
+        const cartItems = document.querySelectorAll('.cart-item');
+        cartItems.forEach(item => {
+            const quantitySpan = item.querySelector('.quantity');
+            const minusBtn = item.querySelector('.minus-btn');
+            
+            quantitySpan.textContent = '0';
+            minusBtn.disabled = true;
+            
+            // Update item data
+            const itemId = item.dataset.id;
+            const itemData = this.items.find(item => item.id === itemId);
+            if (itemData) {
+                itemData.quantity = 0;
+            }
         });
     }
 
@@ -77,12 +98,12 @@ class ShoppingCart {
         const quantitySpan = cartItem.querySelector('.quantity');
         const currentQuantity = parseInt(quantitySpan.textContent);
         
-        if (currentQuantity > 1) {
+        if (currentQuantity > 0) {
             // Update quantity
             quantitySpan.textContent = currentQuantity - 1;
             
             // Update minus button state
-            if (currentQuantity - 1 === 1) {
+            if (currentQuantity - 1 === 0) {
                 button.disabled = true;
             }
             
